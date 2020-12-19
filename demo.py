@@ -2,32 +2,14 @@ import sys
 sys.path.append(".")
 from bullet import bullet
 from player import player
+from eventHandler import eventHandler
 import pygame
 import random
 
 # the basic demo about how to use all this function
 
 # Event handler
-def eventHandler(event):
-    dx = 0
-    dy = 0
-    # allow user to close the window by click th X on top right
-    if event.type == pygame.QUIT:
-        pygame.quit()
-        sys.exit()
-    # input detect
-    elif event.type == pygame.KEYDOWN:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            dy += -2
-        if keys[pygame.K_DOWN]:
-            dy += 2
-        if keys[pygame.K_LEFT]:
-            dx += -2
-        if keys[pygame.K_RIGHT]:
-            dx += 2
 
-    return (dx, dy)
 
 # window size
 winSize = (800, 600)
@@ -49,15 +31,19 @@ character = pygame.sprite.Group()
 # add player in sprite
 character.add(player())
 
+handler = eventHandler()
+
 clock = pygame.time.Clock()
+movement = pygame.math.Vector2(0, 0)
 frame = 1
 while True:
     # fps = 60
     # this while loop only run 60 times a sec
     clock.tick(60)
     frame += 1
-    for event in pygame.event.get():
-        movement = eventHandler(event)
+    handler.eventReceive()
+    movement = handler.getMomentum()
+
     # random generate bullet pos
     tempX = random.randint(0, winSize[0] / 5)
     tempY = random.randint(0, winSize[1] / 5)
@@ -89,9 +75,10 @@ while True:
         b.update()
         if b.isEnd():
             b.kill()
+    movement = pygame.math.Vector2(0, 0)
 
     # keep track current fps
-    if frame == 59:
+    if frame == 60:
         frame = 1
 # bye bye
 pygame.quit()
