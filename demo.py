@@ -18,10 +18,11 @@ screen = pygame.display.set_mode(winSize)
 pygame.display.set_caption("Demo")
 
 # background layer
-bg = pygame.Surface(winSize)
-bg.fill([0, 0, 0])
+#bg = pygame.Surface(winSize)
+bg = pygame.image.load('./png/bg243.png').convert()
 
-bulletLayer = pygame.Surface(winSize)
+#May be no longer need
+#bulletLayer = pygame.Surface(winSize)
 
 # projectile spite group
 # allow you to rander bullet or enemy faster
@@ -41,81 +42,87 @@ movement = pygame.math.Vector2(0, 0)
 frame = 0
 takeDown = 0
 bossCount = 0
+bg_Y = -600
 while True:
-    # fps = 60
-    # this while loop only run 60 times a sec
-    clock.tick(60)
-    handler.eventReceive()
-    movement = handler.getMomentum()
+	# fps = 60
+	# this while loop only run 60 times a sec
+	clock.tick(60)
+	handler.eventReceive()
+	movement = handler.getMomentum()
 
-    # random generate bullet pos
-    tempX = random.randint(20, winSize[0] - 20)
-    tempY = random.randint(0, winSize[1] / 5)
-    rand  = random.randint(0, 100)
+	# random generate bullet pos
+	tempX = random.randint(20, winSize[0] - 20)
+	tempY = random.randint(0, winSize[1] / 5)
+	rand  = random.randint(0, 100)
 
-    if rand == 5:
-        npc.add(pineApplePizza([tempX, tempY]))
-    if bossCount == 0 and takeDown > 10:
-        bossCount += 1
-        npc.add(boss([tempX, tempY]))
+	if rand == 5:
+		npc.add(pineApplePizza([tempX, tempY]))
+	if bossCount == 0 and takeDown > 10:
+		bossCount += 1
+		npc.add(boss([tempX, tempY]))
 
-    # rander bg on screen
-    # not quite sure about this part
-    screen.blit(bg, (0, 0))
-    npcProj.draw(screen)
-    playerProj.draw(screen)
-    npc.draw(screen)
-    character.draw(screen)
-    bg.blit(bulletLayer, (0, 0))
-    pygame.display.update()
+	# rander bg on screen
+	# not quite sure about this part
+	if bg_Y >= 0:
+		bg_Y = -600
+	else:
+		bg_Y = bg_Y + 1
+	screen.blit(bg,(0,bg_Y))
+	npcProj.draw(screen)
+	playerProj.draw(screen)
+	npc.draw(screen)
+	character.draw(screen)
+	#screen.blit(bulletLayer, (0, 0))
+	pygame.display.update()
 
-    # clear screen
-    bulletLayer.fill([0, 0, 0])
-    # update all stuff
-    for c in character:
-        c.update(movement)
-        if frame % 10 == 0:
-            playerProj.add(c.fire())
-        # if check collide
-        # if collide return index else return -1
-        isHit = pygame.sprite.spritecollide(c, npcProj, True)
-        if len(isHit) != 0:
-            print("You Die")
-            print("score :", takeDown)
-            pygame.quit()
+	# bulletLayer is removed by MRP
+	#bulletLayer.fill([0,0,0])
+	#bulletLayer.blit(bg, (0, 0))
+	# update all stuff
+	for c in character:
+		c.update(movement)
+		if frame % 10 == 0:
+			playerProj.add(c.fire())
+		# if check collide
+		# if collide return index else return -1
+		isHit = pygame.sprite.spritecollide(c, npcProj, True)
+		if len(isHit) != 0:
+			print("You Die")
+			print("score :", takeDown)
+			pygame.quit()
 
-    for i in npc:
-        isHit = pygame.sprite.spritecollide(i, playerProj, True)
-        if len(isHit) != 0:
-            if type(i).__name__ == "boss":
-                bossCount -= 1
-            i.kill()
-            takeDown += 1
-            continue
-        i.update()
-        if type(i).__name__ == "boss":
-            npcProj.add(i.fire())
-            continue
+	for i in npc:
+		isHit = pygame.sprite.spritecollide(i, playerProj, True)
+		if len(isHit) != 0:
+			if type(i).__name__ == "boss":
+				bossCount -= 1
+			i.kill()
+			takeDown += 1
+			continue
+		i.update()
+		if type(i).__name__ == "boss":
+			npcProj.add(i.fire())
+			continue
 
-        if frame % 60 == 0:
-            for c in character:
-                npcProj.add(i.fire(c.getPos()))
+		if frame % 60 == 0:
+			for c in character:
+				npcProj.add(i.fire(c.getPos()))
 
-    for b in npcProj:
-        b.update()
-        if b.isEnd():
-            b.kill()
+	for b in npcProj:
+		b.update()
+		if b.isEnd():
+			b.kill()
 
-    for b in playerProj:
-        b.update()
-        if b.isEnd():
-            b.kill()
+	for b in playerProj:
+		b.update()
+		if b.isEnd():
+			b.kill()
 
-    movement = pygame.math.Vector2(0, 0)
+	movement = pygame.math.Vector2(0, 0)
 
-    # keep track current fps
-    frame += 1
-    frame %= 60
+	# keep track current fps
+	frame += 1
+	frame %= 60
 # bye bye
 print(takeDown)
 pygame.quit()
