@@ -1,7 +1,8 @@
 import sys
 sys.path.append(".")
-from bullet import bullet
+from bullet import *
 from player import player
+from enemy import *
 from eventHandler import eventHandler
 import pygame
 import random
@@ -25,8 +26,10 @@ bulletLayer = pygame.Surface(winSize)
 # projectile spite group
 # allow you to rander bullet or enemy faster
 # which means make your life eazier
-projectile = pygame.sprite.Group()
+npcProj = pygame.sprite.Group()
+playerProj = pygame.sprite.Group()
 character = pygame.sprite.Group()
+npc = pygame.sprite.Group()
 
 # add player in sprite
 character.add(player())
@@ -35,27 +38,33 @@ handler = eventHandler()
 
 clock = pygame.time.Clock()
 movement = pygame.math.Vector2(0, 0)
-frame = 1
+frame = 0
+takeDown = 0
+bossCount = 0
 while True:
     # fps = 60
     # this while loop only run 60 times a sec
     clock.tick(60)
-    frame += 1
     handler.eventReceive()
     movement = handler.getMomentum()
 
     # random generate bullet pos
-    tempX = random.randint(0, winSize[0] / 5)
+    tempX = random.randint(20, winSize[0] - 20)
     tempY = random.randint(0, winSize[1] / 5)
-    # add one bullet each 1/6 sec
-    if frame % 10 == 0:
-        projectile.add(bullet([tempX, tempY], [tempX * 0.01, tempY * 0.01], [tempX * 5, tempY * 5]))
+    rand  = random.randint(0, 100)
 
+    if rand == 5:
+        npc.add(pineApplePizza([tempX, tempY]))
+    if bossCount == 0 and takeDown > 10:
+        bossCount += 1
+        npc.add(boss([tempX, tempY]))
 
     # rander bg on screen
     # not quite sure about this part
     screen.blit(bg, (0, 0))
-    projectile.draw(screen)
+    npcProj.draw(screen)
+    playerProj.draw(screen)
+    npc.draw(screen)
     character.draw(screen)
     bg.blit(bulletLayer, (0, 0))
     pygame.display.update()
@@ -65,20 +74,48 @@ while True:
     # update all stuff
     for c in character:
         c.update(movement)
+        if frame % 10 == 0:
+            playerProj.add(c.fire())
         # if check collide
         # if collide return index else return -1
-        isHit = pygame.sprite.spritecollide(c, projectile, True)
+        isHit = pygame.sprite.spritecollide(c, npcProj, True)
         if len(isHit) != 0:
             print("You Die")
-            sys.exit()
-    for b in projectile:
+            print("score :", takeDown)
+            pygame.quit()
+
+    for i in npc:
+        isHit = pygame.sprite.spritecollide(i, playerProj, True)
+        if len(isHit) != 0:
+            if type(i).__name__ == "boss":
+                bossCount -= 1
+            i.kill()
+            takeDown += 1
+            continue
+        i.update()
+        if type(i).__name__ == "boss":
+            npcProj.add(i.fire())
+            continue
+
+        if frame % 60 == 0:
+            for c in character:
+                npcProj.add(i.fire(c.getPos()))
+
+    for b in npcProj:
         b.update()
         if b.isEnd():
             b.kill()
+
+    for b in playerProj:
+        b.update()
+        if b.isEnd():
+            b.kill()
+
     movement = pygame.math.Vector2(0, 0)
 
     # keep track current fps
-    if frame == 60:
-        frame = 1
+    frame += 1
+    frame %= 60
 # bye bye
+print(takeDown)
 pygame.quit()
