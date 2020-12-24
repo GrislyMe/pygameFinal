@@ -76,8 +76,7 @@ while True:
 	pygame.display.update()
 
 	# bulletLayer is removed by MRP
-	#bulletLayer.fill([0,0,0])
-	#bulletLayer.blit(bg, (0, 0))
+	
 	# update all stuff
 	for c in character:
 		c.update(movement)
