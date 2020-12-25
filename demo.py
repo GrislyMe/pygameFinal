@@ -9,9 +9,6 @@ import random
 
 # the basic demo about how to use all this function
 
-# Event handler
-
-
 # window size
 winSize = (800, 600)
 screen = pygame.display.set_mode(winSize)
@@ -39,11 +36,12 @@ frame = 0
 takeDown = 0
 bossCount = 0
 bg_Y = -600
+over = 0
 while True:
 	# fps = 60
 	# this while loop only run 60 times a sec
 	clock.tick(60)
-	handler.eventReceive()
+	over = handler.eventReceive()
 	movement = handler.getMomentum()
 
 	# random generate bullet pos
@@ -68,10 +66,9 @@ while True:
 	playerProj.draw(screen)
 	npc.draw(screen)
 	character.draw(screen)
-	#screen.blit(bulletLayer, (0, 0))
 	pygame.display.update()
 
-	# bulletLayer is removed by MRP
+	# bulletLayer is removed
 	
 	# update all stuff
 	for c in character:
@@ -82,10 +79,11 @@ while True:
 		# if collide return index else return -1
 		isHit = pygame.sprite.spritecollide(c, npcProj, True)
 		if len(isHit) != 0:
-			print("You Die")
-			print("score :", takeDown)
-			pygame.quit()
-
+			print("你死了！")
+			print("你的得分為：", takeDown)
+			over = 999
+	if over == 999:
+		break
 	for i in npc:
 		isHit = pygame.sprite.spritecollide(i, playerProj, True)
 		if len(isHit) != 0:
@@ -119,5 +117,4 @@ while True:
 	frame += 1
 	frame %= 60
 # bye bye
-print(takeDown)
-pygame.quit()
+print("感謝您遊玩體驗版,掰掰")

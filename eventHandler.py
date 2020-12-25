@@ -12,7 +12,7 @@ class eventHandler():
 			if self.__checkPause(event):
 				continue
 			if event.type == pygame.QUIT:
-				pygame.quit()
+				return 999
 			elif event.type == pygame.KEYUP:
 				self.__checkUserKeyUp(event.key)
 			elif event.type == pygame.KEYDOWN:
