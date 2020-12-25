@@ -38,83 +38,83 @@ bossCount = 0
 bg_Y = -600
 over = 0
 while True:
-	# fps = 60
-	# this while loop only run 60 times a sec
-	clock.tick(60)
-	over = handler.eventReceive()
-	movement = handler.getMomentum()
+    # fps = 60
+        # this while loop only run 60 times a sec
+        clock.tick(60)
+        over = handler.eventReceive()
+        movement = handler.getMomentum()
 
-	# random generate bullet pos
-	tempX = random.randint(20, winSize[0] - 20)
-	tempY = random.randint(0, winSize[1] / 5)
-	rand  = random.randint(0, 100)
+        # random generate bullet pos
+        tempX = random.randint(20, winSize[0] - 20)
+        tempY = random.randint(0, winSize[1] / 5)
+        rand  = random.randint(0, 100)
 
-	if rand == 5:
-		npc.add(pineApplePizza([tempX, tempY]))
-	if bossCount == 0 and takeDown > 10:
-		bossCount += 1
-		npc.add(boss([tempX, tempY]))
+        if rand == 5:
+            npc.add(pineApplePizza([tempX, tempY]))
+        if bossCount == 0 and takeDown > 10:
+            bossCount += 1
+                npc.add(boss([tempX, tempY]))
 
-	# rander bg on screen
-	# not quite sure about this part
-	if bg_Y >= 0:
-		bg_Y = -600
-	else:
-		bg_Y = bg_Y + 1
-	screen.blit(bg,(0,bg_Y))
-	npcProj.draw(screen)
-	playerProj.draw(screen)
-	npc.draw(screen)
-	character.draw(screen)
-	pygame.display.update()
+        # rander bg on screen
+        # not quite sure about this part
+        if bg_Y >= 0:
+            bg_Y = -600
+        else:
+            bg_Y = bg_Y + 1
+        screen.blit(bg,(0,bg_Y))
+        npcProj.draw(screen)
+        playerProj.draw(screen)
+        npc.draw(screen)
+        character.draw(screen)
+        pygame.display.update()
 
-	# bulletLayer is removed
-	
-	# update all stuff
-	for c in character:
-		c.update(movement)
-		if frame % 10 == 0:
-			playerProj.add(c.fire())
-		# if check collide
-		# if collide return index else return -1
-		isHit = pygame.sprite.spritecollide(c, npcProj, True)
-		if len(isHit) != 0:
-			print("你死了！")
-			print("你的得分為：", takeDown)
-			over = 999
-	if over == 999:
-		break
-	for i in npc:
-		isHit = pygame.sprite.spritecollide(i, playerProj, True)
-		if len(isHit) != 0:
-			if type(i).__name__ == "boss":
-				bossCount -= 1
-			i.kill()
-			takeDown += 1
-			continue
-		i.update()
-		if type(i).__name__ == "boss":
-			npcProj.add(i.fire())
-			continue
+        # bulletLayer is removed
 
-		if frame % 60 == 0:
-			for c in character:
-				npcProj.add(i.fire(c.getPos()))
+        # update all stuff
+        for c in character:
+            c.update(movement)
+                if frame % 10 == 0:
+                    playerProj.add(c.fire())
+                # if check collide
+                # if collide return index else return -1
+                isHit = pygame.sprite.spritecollide(c, npcProj, True)
+                if len(isHit) != 0:
+                    print("你死了！")
+                        print("你的得分為：", takeDown)
+                        print("感謝您遊玩體驗版,掰掰")
+                        sys.exit()
+        for i in npc:
+            isHit = pygame.sprite.spritecollide(i, playerProj, True)
+                if len(isHit) != 0:
+                    if type(i).__name__ == "boss":
+                        bossCount -= 1
+                        i.kill()
+                        takeDown += 1
+                        continue
+                i.update()
+                if type(i).__name__ == "boss":
+                    npcProj.add(i.fire())
+                        continue
 
-	for b in npcProj:
-		b.update()
-		if b.isEnd():
-			b.kill()
+                if frame % 60 == 0:
+                    for c in character:
+                        npcProj.add(i.fire(c.getPos()))
 
-	for b in playerProj:
-		b.update()
-		if b.isEnd():
-			b.kill()
+        for b in npcProj:
+            b.update()
+                if b.isEnd():
+                    b.kill()
 
-	movement = pygame.math.Vector2(0, 0)
+        for b in playerProj:
+            b.update()
+                if b.isEnd():
+                    b.kill()
 
-	# keep track current fps
-	frame += 1
-	frame %= 60
+        movement = pygame.math.Vector2(0, 0)
+
+        # keep track current fps
+        frame += 1
+        frame %= 60
 # bye bye
 print("感謝您遊玩體驗版,掰掰")
+sys.exit()
