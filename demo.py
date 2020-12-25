@@ -18,11 +18,7 @@ screen = pygame.display.set_mode(winSize)
 pygame.display.set_caption("Demo")
 
 # background layer
-#bg = pygame.Surface(winSize)
 bg = pygame.image.load('./png/bg243.png').convert()
-
-#May be no longer need
-#bulletLayer = pygame.Surface(winSize)
 
 # projectile spite group
 # allow you to rander bullet or enemy faster
