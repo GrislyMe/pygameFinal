@@ -25,3 +25,10 @@ class player(pygame.sprite.Sprite):
 
     def fire(self):
         return bulletFromPlayer(self.__current + [0, -20], [0, -3])
+
+    def skill(self, movement):
+        # flash
+        movement *= 20
+        self.__current += movement
+        self.rect.center = self.__current
+        self.hitbox.center = self.__current
