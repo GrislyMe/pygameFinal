@@ -9,7 +9,6 @@ class bullet(pygame.sprite.Sprite):
         self.__end = pygame.math.Vector2(endPos)
         self.hitBox = []
         self.rect = []
-
     # move nullet alone with the vector
     def update(self):
         self.__current += self.__dir

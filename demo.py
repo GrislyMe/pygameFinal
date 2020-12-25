@@ -102,6 +102,9 @@ while True:
                 npcProj.add(i.fire(c.getPos()))
 
     for b in npcProj:
+        isHit = pygame.sprite.spritecollide(b, playerProj, True)
+        if len(isHit) != 0:
+            b.kill()
         b.update()
         if b.isEnd():
             b.kill()

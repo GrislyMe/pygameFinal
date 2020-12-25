@@ -11,7 +11,7 @@ class enemy(pygame.sprite.Sprite):
         self.__movement = 0.3
         self.hitBox = []
         self.rect = []
-
+        self.firePos = [0, 0]
     def update(self):
         direction = random.randint(0, 100)
         if direction == 59:
@@ -55,4 +55,9 @@ class boss(enemy, pygame.sprite.Sprite):
         self.hitBox = pygame.Rect(self._enemy__current, (30, 20))
 
     def fire(self):
-        return beamFromNpc(self._enemy__current)
+        if self.firePos == [0, 0]:
+            self.firePos = self._enemy__current    
+        #return beamFromNpc(self._enemy__current)
+        return beamFromNpc(self.firePos)
+    def clearfire(self):
+        self.firePos = [0, 0]
